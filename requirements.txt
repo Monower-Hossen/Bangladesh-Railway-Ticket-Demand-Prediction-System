@@ -1,0 +1,9 @@
+pandas
+numpy
+scikit-learn
+PyYAML
+mlflow
+boto3
+Flask
+gunicorn
+tqdm
