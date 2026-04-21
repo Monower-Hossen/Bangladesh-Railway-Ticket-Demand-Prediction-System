@@ -1,0 +1,12 @@
+artifacts_root: artifacts
+
+data_ingestion:
+  raw_data_path: artifacts/data_ingestion/raw.csv
+  ingested_train_dir: artifacts/data_ingestion/train.csv
+  ingested_test_dir: artifacts/data_ingestion/test.csv
+
+data_transformation:
+  transformed_obj_dir: artifacts/data_transformation
+
+model_trainer:
+  model_path: artifacts/model_trainer/model.pkl

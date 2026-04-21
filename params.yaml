@@ -1,0 +1,10 @@
+# Hyperparameters for potential regression models
+params:
+  RandomForest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 2
+
+  XGBoost:
+    learning_rate: 0.1
+    n_estimators: 200

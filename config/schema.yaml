@@ -1,0 +1,36 @@
+# Railway Ticket Dataset Schema
+columns:
+  Ticket_No: object
+  Issue_Date: object
+  Issue_Time: object
+  Passenger_Name: object
+  From: object
+  To: object
+  Train_Name: object
+  Departure_Time: object
+  Coach: object
+  Seat_Number: object
+  Seats_Booked: int64
+  Fare: float64
+  Payment_Method: object
+  Journey_Date: object
+
+target_column: Seats_Booked # Change this to the column you intend to predict
+
+# Expected data types for validation checks
+numerical_columns:
+  - Fare
+
+categorical_columns:
+  - Ticket_No
+  - From
+  - To
+  - Train_Name
+  - Coach
+  - Payment_Method
+
+datetime_columns:
+  - Issue_Date
+  - Journey_Date
+  - Issue_Time
+  - Departure_Time

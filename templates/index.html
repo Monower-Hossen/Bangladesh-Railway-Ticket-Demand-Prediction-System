@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railway Demand Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 50px; }
+        .container { max-width: 800px; }
+        .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .prediction-result { font-size: 2rem; color: #0d6efd; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4 mb-4">
+            <h2 class="text-center mb-4">Ticket Demand Predictor</h2>
+            <form action="/predict" method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Train Name</label>
+                        <select class="form-select" name="Train_Name" required>
+                            {% for train in trains %}<option value="{{train}}" {% if form_data.Train_Name == train %}selected{% endif %}>{{train}}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Journey Date</label>
+                        <input type="date" class="form-control" name="Journey_Date" value="{{form_data.Journey_Date}}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">From</label>
+                        <select class="form-select" name="From" required>
+                            {% for st in stations %}<option value="{{st}}" {% if form_data.From == st %}selected{% endif %}>{{st}}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">To</label>
+                        <select class="form-select" name="To" required>
+                            {% for st in stations %}<option value="{{st}}" {% if form_data.To == st %}selected{% endif %}>{{st}}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Coach</label>
+                        <select class="form-select" name="Coach">
+                            {% for coach in coaches %}<option value="{{coach}}" {% if form_data.Coach == coach %}selected{% endif %}>{{coach}}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fare (BDT)</label>
+                        <input type="number" class="form-control" name="Fare" value="{{form_data.Fare or 500}}" step="0.01">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Departure Time</label>
+                        <input type="time" class="form-control" name="Departure_Time" value="{{form_data.Departure_Time or '10:00'}}">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-4">Predict Demand</button>
+            </form>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if results %}
+        <div class="card p-4 text-center">
+            <h4>Predicted Ticket Sales</h4>
+            <div class="prediction-result">{{ results | round(2) }}</div>
+            
+            {% if insights %}
+            <hr>
+            <div class="row text-start mt-3">
+                <div class="col-6"><strong>Demand Level:</strong> {{ insights.demand_level }}</div>
+                <div class="col-6"><strong>Strategy:</strong> {{ insights.fare_strategy }}</div>
+                <div class="col-6"><strong>Peak Status:</strong> {{ insights.peak_status }}</div>
+                <div class="col-6"><strong>Allocation:</strong> {{ insights.allocation }}</div>
+            </div>
+
+            <div class="mt-4">
+                <canvas id="demandChart"></canvas>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if insights and insights.chart_data %}
+    <script>
+        const ctx = document.getElementById('demandChart').getContext('2d');
+        // The | tojson filter is crucial here to prevent serialization errors
+        const chartData = {{ insights.chart_data | tojson }};
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: '7-Day Demand Forecast',
+                    data: chartData.values,
+                    borderColor: '#0d6efd',
+                    tension: 0.1,
+                    fill: true,
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)'
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

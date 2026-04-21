@@ -4,10 +4,11 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s:')
 
-project_name = "house_price_prediction"
+project_name = "ml_projects"
 
 list_of_files = [
     ".github/workflows/.gitkeep",
+    f"src/__init__.py",
     f"src/{project_name}/__init__.py",
     f"src/{project_name}/components/__init__.py",
     f"src/{project_name}/components/data_ingestion.py",
@@ -30,7 +31,6 @@ list_of_files = [
     f"src/{project_name}/constants/__init__.py",
     "config/config.yaml",
     "params.yaml",
-    "config/schema.yaml",
     "notebook/data/.gitkeep",
     "templates/index.html",
     "app.py",
